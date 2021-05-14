@@ -37,18 +37,28 @@ app.get('/articles', getAllArticles);
 
 
 //Ticket #2
-const getArticlesByAuthor = (req , res , next) =>{
-    res.status(200);
+const getArticlesByAuthor = (req, res, next) =>{
     const reqAuthor = req.query.author;
-    console.log(reqAuthor);
-    const arrOfArticles= articles.filter((element , index) =>{
+    const arrOfArticles= articles.filter((element) =>{
         return element.author === reqAuthor;
     })
-    console.log(arrOfArticles);
-    res.json(arrOfArticles);
+    res.status(200).json(arrOfArticles);
 }
 
 app.get('/articles/search_1', getArticlesByAuthor);
+
+
+//Ticket #3
+const getAnArticleById = (req, res, next) =>{
+    const reqId = req.query.id;
+    const arrOfArticles= articles.filter((element) =>{
+        return element.id == reqId;
+    })
+    res.status(200).json(arrOfArticles);
+}
+
+app.get('/articles/search_2', getAnArticleById);
+
 
 
 
