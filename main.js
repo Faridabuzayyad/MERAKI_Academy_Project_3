@@ -1,4 +1,5 @@
 const express = require("express");
+const { uuid } = require('uuidv4');
 const app = express();
 const PORT = 5000;
 
@@ -82,8 +83,29 @@ const getAnArticleById = async (req, res, next) =>{
 app.get('/articles/search_2', getAnArticleById);
 
 //Ticket #4
+const createNewArticle = (req, res, next) =>{
+    const title = req.body.title;
+    const description = req.body.description;
+    const author = req.body.author;
+    const err = new Error("You need A title with length 3 or more chars , A descripton with length 10 or more chars , An author name with 3 or more chars");
+    err.status = 406;
+    if(title.length >= 3 && description.length >= 10 && author.length >= 3){
+        let id = uuid();
+        const newArticle = {title :`${title}` , description : `${description}`, author : `${author}`, id : `${id}`};
+        articles.push(newArticle);
+        res.status(201).json(newArticle);
+    }
+    else{
+        next(err);
+    }
+    
+
+}
+
+app.post('/articles' , createNewArticle);
 
 
+//ticket #5 
 
 
 //Error Handler
