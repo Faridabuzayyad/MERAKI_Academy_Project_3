@@ -30,14 +30,25 @@ const articles = [
     ];
 
 const getAllArticles = (req , res , next)=>{
-    res.status(200);
-    res.json(articles);
+    res.status(200).json(articles);
 }
 
-app.get('/articles' , getAllArticles);
+app.get('/articles', getAllArticles);
 
 
+//Ticket #2
+const getArticlesByAuthor = (req , res , next) =>{
+    res.status(200);
+    const reqAuthor = req.query.author;
+    console.log(reqAuthor);
+    const arrOfArticles= articles.filter((element , index) =>{
+        return element.author === reqAuthor;
+    })
+    console.log(arrOfArticles);
+    res.json(arrOfArticles);
+}
 
+app.get('/articles/search_1', getArticlesByAuthor);
 
 
 
