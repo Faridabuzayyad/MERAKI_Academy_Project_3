@@ -131,7 +131,23 @@ const updateAnArticleById = async (req , res , next) => {
 app.put('/articles/:id' , updateAnArticleById);
 
 //Ticket #6
+const deleteArticleById = (req, res, next) =>{
+    const id = req.params.id;
+    const err = new Error("No Articles with this id");
+    err.status = 404;
+    articles.forEach((element, i) => {
+        if(element.id == id){
+            articles.splice(i,1);
+            const delObject = {"success": true , "message" : `Successfully deleted article with id => ${id}`}
+            res.status(200).json(delObject);
+        }
+        else{
+            next(err);
+        };
+    });
+}
 
+app.delete("/articles/:id", deleteArticleById);
 
 //Error Handler
 app.use((err , req , res , next)=>{
