@@ -149,6 +149,29 @@ const deleteArticleById = (req, res, next) =>{
 
 app.delete("/articles/:id", deleteArticleById);
 
+//Ticket #7
+const deleteArticlesByAuthor = (req, res, next) =>{
+    const author = req.body.author;
+    const oldLength = articles.length;
+    const err = new Error("No Articles found for this Author, please check the name you are entering");
+    err.status = 404;
+    articles.forEach((element,index) => {
+        if(element.author === author){
+            articles.splice(index, 1)
+        }
+    })
+    const newLength = articles.length;
+    if(oldLength == newLength){
+        next(err);
+    }
+    else{
+        const delObject = {"success": true , "message" : `Successfully deleted all articles for the author => ${author}`}
+        res.status(200).json(delObject);
+    }
+}
+
+app.delete("/articles", deleteArticlesByAuthor);
+
 //Error Handler
 app.use((err , req , res , next)=>{
     res.status(err.status);
