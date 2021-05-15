@@ -87,9 +87,9 @@ const createNewArticle = (req, res, next) =>{
     const title = req.body.title;
     const description = req.body.description;
     const author = req.body.author;
-    const err = new Error("You need A title with length 3 or more chars , A descripton with length 10 or more chars , An author name with 3 or more chars");
+    const err = new Error("You need to Enter A title with at least 2 characters , A descripton with at least 10 characters , An author name with at least 2 characters");
     err.status = 406;
-    if(title.length >= 3 && description.length >= 10 && author.length >= 3){
+    if(title.length >= 2 && description.length >= 10 && author.length >= 2){
         let id = uuid();
         const newArticle = {title :`${title}` , description : `${description}`, author : `${author}`, id : `${id}`};
         articles.push(newArticle);
@@ -105,7 +105,32 @@ const createNewArticle = (req, res, next) =>{
 app.post('/articles' , createNewArticle);
 
 
-//ticket #5 
+//Ticket #5 
+const updateAnArticleById = async (req , res , next) => {
+    const id = req.params.id;
+    const newTitle = req.body.title;
+    const newDescription = req.body.description;
+    const newAuthor = req.body.author;
+    const err = new Error("You need to Enter A title with at least 2 characters , A descripton with at least 10 characters , An author name with at least 2 characters and an existing Article ID");
+    err.status = 406;
+    let index;
+    await articles.forEach((element, i) => {
+        if(element.id == id){
+            index = i;
+        }
+    });
+    if(index < articles.length && newTitle.length >= 2 && newDescription.length >= 10 && newAuthor.length >= 2){
+        articles[index] = {title :`${newTitle}` , description : `${newDescription}`, author : `${newAuthor}`, id : `${id}`};
+        res.status(200).json(articles[index]);
+    }
+    else{
+        next(err);
+    };
+};
+
+app.put('/articles/:id' , updateAnArticleById);
+
+//Ticket #6
 
 
 //Error Handler
