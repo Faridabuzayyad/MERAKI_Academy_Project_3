@@ -31,7 +31,7 @@ const articles = [
 
 //Ticket #1    
 const getAllArticles = (req , res , next)=>{
-    const err = new Error("No Articles Available");
+    const err = new Error("No Articles Found");
     err.status = 404;
     if(articles.length === 0){
         next(err)
@@ -47,16 +47,16 @@ app.get('/articles', getAllArticles);
 //Ticket #2
 const getArticlesByAuthor = async (req, res, next) =>{
     const reqAuthor = req.query.author;
+    const err = new Error("No Articles for this Author");
+    err.status = 404;
     const arrOfArticles= await articles.filter((element) =>{
         return element.author === reqAuthor;
     });
-    const err = new Error("No Articles for this Author");
-    err.status = 404;
-    if(arrOfArticles.length == 0){
-        next(err);
+    if(arrOfArticles.length > 0){
+        res.status(200).json(arrOfArticles);
     }
     else{
-        res.status(200).json(arrOfArticles);
+        next(err);
     }
     
 }
@@ -111,8 +111,8 @@ const updateAnArticleById = async (req , res , next) => {
     const newTitle = req.body.title;
     const newDescription = req.body.description;
     const newAuthor = req.body.author;
-    const err = new Error("You need to Enter A title with at least 2 characters , A descripton with at least 10 characters , An author name with at least 2 characters and an existing Article ID");
-    err.status = 406;
+    const err = new Error("You need to enter an existing Article ID");
+    err.status = 404;
     let index;
     await articles.forEach((element, i) => {
         if(element.id == id){
@@ -133,7 +133,7 @@ app.put('/articles/:id' , updateAnArticleById);
 //Ticket #6
 const deleteArticleById = (req, res, next) =>{
     const id = req.params.id;
-    const err = new Error("No Articles with this id");
+    const err = new Error("No Articles with this id found");
     err.status = 404;
     articles.forEach((element, i) => {
         if(element.id == id){
