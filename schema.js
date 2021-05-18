@@ -6,17 +6,17 @@ const users = new mongoose.Schema({
     age: Number,
     country: String,
     email: String,
-    password: Strings,
+    password: String,
 });
 
 const articles = new mongoose.Schema({
     title: String,
     description: String,
-    author: ObjectId,
+    author: {type: mongoose.Schema.ObjectId, ref:"User"}
 });
 
 const user = mongoose.model("User", users);
 const article = mongoose.model("Article", articles);
 
-module.exports.User = user;
-module.exports.Article = article;
+module.exports.UserModel = user;
+module.exports.ArticleModel = article;

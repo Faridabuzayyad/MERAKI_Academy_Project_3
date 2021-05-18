@@ -1,7 +1,6 @@
 const express = require("express");
 const { uuid } = require('uuidv4');
-const User = require("./schema");
-const Article = require("./schema");
+const {UserModel, ArticleModel} = require("./schema");
 const db = require("./db");
 const app = express();
 const PORT = 5000;
@@ -174,6 +173,24 @@ const deleteArticlesByAuthor = (req, res, next) =>{
 }
 
 app.delete("/articles", deleteArticlesByAuthor);
+
+
+
+//Tickest 1-B
+const createNewAuthor = async (req,res,next)=> {
+    const {firstName, lastName, age, country, email, password} = req.body;
+    const newAuthor = new UserModel({firstName, lastName, age, country, email, password});
+    try {
+        const addedAuthor = await newAuthor.save();
+        res.status(201).json(addedAuthor);
+    } catch (error) {
+        res.json(error);
+    }
+}
+
+app.post("/users", createNewAuthor);
+
+
 
 //Error Handler
 app.use((err , req , res , next)=>{
