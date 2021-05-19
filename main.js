@@ -31,15 +31,15 @@ const articles = [
         },
     ];
 
-//Ticket #1    
-const getAllArticles = (req , res , next)=>{
+//Ticket 2.A #2    
+const getAllArticles = async (req , res , next)=>{
+    const allArticles = await ArticleModel.find({});
     const err = new Error("No Articles Found");
     err.status = 404;
-    if(articles.length === 0){
-        next(err)
-    }
-    else{
-        res.status(200).json(articles);
+    try {
+        res.json(allArticles);
+    } catch (err) {
+        next(err);
     }
 }
 
@@ -84,7 +84,7 @@ const getAnArticleById = async (req, res, next) =>{
 
 app.get('/articles/search_2', getAnArticleById);
 
-//Ticket #4
+//Ticket 2.A #1
 const createNewArticle = async (req, res, next) =>{
     const {title, description, author} = req.body;
     const newArticle = new ArticleModel({title, description, author});
