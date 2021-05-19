@@ -118,24 +118,15 @@ const deleteArticleById = async (req, res, next) =>{
 
 app.delete("/articles/:id", deleteArticleById);
 
-//Ticket #7
-const deleteArticlesByAuthor = (req, res, next) =>{
+//Ticket 2.A #7
+const deleteArticlesByAuthor = async (req, res, next) =>{
     const author = req.body.author;
-    const oldLength = articles.length;
-    const err = new Error("No Articles found for this Author, please check the name you are entering");
-    err.status = 404;
-    articles.forEach((element,index) => {
-        if(element.author === author){
-            articles.splice(index, 1)
-        }
-    })
-    const newLength = articles.length;
-    if(oldLength == newLength){
-        next(err);
-    }
-    else{
-        const delObject = {"success": true , "message" : `Successfully deleted all articles for the author => ${author}`}
+    await ArticleModel.findOneAndDelete(author);
+    const delObject = {"success": true , "message" : `Successfully deleted article by author => ${author}`}
+    try {
         res.status(200).json(delObject);
+    } catch (error) {
+        res.json(error);
     }
 }
 
