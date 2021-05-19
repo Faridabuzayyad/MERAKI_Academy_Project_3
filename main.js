@@ -135,10 +135,30 @@ const login = async (req,res,next) =>{
     else{
         res.status(401).json("Invalid login credentials")
     }
-    
 };
     
 app.post("/login", login);
+
+//2.B Ticket #3
+const createNewComment = async (req,res,next) => {
+    const {comment, commenter} = req.body;
+    const newComment = new CommentModel({comment, commenter});
+    const id = req.params.id;
+    try {
+        const addedComment = await newComment.save();
+        await ArticleModel.update(
+            { _id: id }, 
+            { $push: { comments: addedComment } },
+        );
+        res.status(201).json(addedComment);
+    } catch (error) {
+        res.json(error);
+    }
+
+}
+
+app.post("/articles/:id/comments", createNewComment);
+
 
 /*Error Handler
 app.use((err , req , res , next)=>{
