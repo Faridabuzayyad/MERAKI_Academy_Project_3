@@ -49,9 +49,9 @@ app.get('/articles', getAllArticles);
 //Ticket 2.A #3 
 const getArticlesByAuthor = async (req, res, next) =>{
     const reqAuthor = await req.query.author;
-    const foundArticle = await ArticleModel.find({author : reqAuthor});
+    const foundArticles = await ArticleModel.find({author : reqAuthor});
     try {
-        res.json(foundArticle);
+        res.json(foundArticles);
     } catch (err) {
         console.log(err);
     }
@@ -61,19 +61,14 @@ const getArticlesByAuthor = async (req, res, next) =>{
 app.get('/articles/search_1', getArticlesByAuthor);
 
 
-//Ticket #3
+//Ticket 2.A #4 
 const getAnArticleById = async (req, res, next) =>{
     const reqId = req.query.id;
-    const reqArticle = await articles.find((element) =>{
-        return element.id == reqId;
-    })
-    const err = new Error("No Articles with this id");
-    err.status = 404;
-    if(reqArticle){
-        res.status(200).json(reqArticle);
-    }
-    else{
-        next(err);
+    const foundArticle = await ArticleModel.findById(reqId).populate("author", "firstName -_id").exec();
+    try {
+        res.json(foundArticle);
+    } catch (err) {
+        console.log(err);
     }
 }
 
