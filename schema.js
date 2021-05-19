@@ -1,13 +1,21 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const users = new mongoose.Schema({
     firstName: String,
     lastName: String,
     age: Number,
     country: String,
-    email: String,
+    email: {type :String, unique: true},
     password: String,
 });
+//Ticket 3.A #1 
+users.pre("save",async function(){
+    this.email = this.email.toLowerCase();
+    const salt = 10;
+    console.log(this.password);
+    this.password = await bcrypt.hash(this.password, salt);
+})
 
 const articles = new mongoose.Schema({
     title: String,
