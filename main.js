@@ -85,23 +85,15 @@ const getAnArticleById = async (req, res, next) =>{
 app.get('/articles/search_2', getAnArticleById);
 
 //Ticket #4
-const createNewArticle = (req, res, next) =>{
-    const title = req.body.title;
-    const description = req.body.description;
-    const author = req.body.author;
-    const err = new Error("You need to Enter A title with at least 2 characters , A descripton with at least 10 characters , An author name with at least 2 characters");
-    err.status = 406;
-    if(title.length >= 2 && description.length >= 10 && author.length >= 2){
-        let id = uuid();
-        const newArticle = {title :`${title}` , description : `${description}`, author : `${author}`, id : `${id}`};
-        articles.push(newArticle);
-        res.status(201).json(newArticle);
+const createNewArticle = async (req, res, next) =>{
+    const {title, description, author} = req.body;
+    const newArticle = new ArticleModel({title, description, author});
+    try {
+        const addedArticle = await newArticle.save();
+        res.status(201).json(addedArticle);
+    } catch (error) {
+        res.json(error);
     }
-    else{
-        next(err);
-    }
-    
-
 }
 
 app.post('/articles' , createNewArticle);
