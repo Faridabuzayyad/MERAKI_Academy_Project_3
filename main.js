@@ -96,7 +96,7 @@ const updateAnArticleById = async (req , res , next) => {
     const options = {"new" : true};
     const updatedArticle = await ArticleModel.findByIdAndUpdate(id,{title, description, author},options); 
     try {
-        res.json(updatedArticle);
+        res.status(200).json(updatedArticle);
     } catch (err) {
         console.log(err);
     }
@@ -104,21 +104,16 @@ const updateAnArticleById = async (req , res , next) => {
 
 app.put('/articles/:id' , updateAnArticleById);
 
-//Ticket #6
-const deleteArticleById = (req, res, next) =>{
+//Ticket 2.A #6 
+const deleteArticleById = async (req, res, next) =>{
     const id = req.params.id;
-    const err = new Error("No Articles with this id found");
-    err.status = 404;
-    articles.forEach((element, i) => {
-        if(element.id == id){
-            articles.splice(i,1);
-            const delObject = {"success": true , "message" : `Successfully deleted article with id => ${id}`}
-            res.status(200).json(delObject);
-        }
-        else{
-            next(err);
-        };
-    });
+    await ArticleModel.findByIdAndDelete(id); 
+    const delObject = {"success": true , "message" : `Successfully deleted article with id => ${id}`};
+    try {
+        res.status(200).json(delObject);
+    } catch (err) {
+        console.log(err);
+    }       
 }
 
 app.delete("/articles/:id", deleteArticleById);
