@@ -46,19 +46,14 @@ const getAllArticles = async (req , res , next)=>{
 app.get('/articles', getAllArticles);
 
 
-//Ticket #2
+//Ticket 2.A #3 
 const getArticlesByAuthor = async (req, res, next) =>{
-    const reqAuthor = req.query.author;
-    const err = new Error("No Articles for this Author");
-    err.status = 404;
-    const arrOfArticles= await articles.filter((element) =>{
-        return element.author === reqAuthor;
-    });
-    if(arrOfArticles.length > 0){
-        res.status(200).json(arrOfArticles);
-    }
-    else{
-        next(err);
+    const reqAuthor = await req.query.author;
+    const foundArticle = await ArticleModel.find({author : reqAuthor});
+    try {
+        res.json(foundArticle);
+    } catch (err) {
+        console.log(err);
     }
     
 }
