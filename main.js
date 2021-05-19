@@ -1,6 +1,9 @@
 const express = require("express");
 const { uuid } = require('uuidv4');
 const {UserModel, ArticleModel, CommentModel} = require("./schema");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 const db = require("./db");
 const app = express();
 const PORT = 5000;
@@ -158,6 +161,8 @@ const createNewComment = async (req,res,next) => {
 }
 
 app.post("/articles/:id/comments", createNewComment);
+
+
 
 
 /*Error Handler
