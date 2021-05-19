@@ -110,7 +110,7 @@ app.delete("/articles", deleteArticlesByAuthor);
 
 
 
-//Tickest 1-B
+//2.B Ticket #1
 const createNewAuthor = async (req,res,next)=> {
     const {firstName, lastName, age, country, email, password} = req.body;
     const newAuthor = new UserModel({firstName, lastName, age, country, email, password});
@@ -125,8 +125,22 @@ const createNewAuthor = async (req,res,next)=> {
 app.post("/users", createNewAuthor);
 
 
+//2.B Ticket #2
+const login = async (req,res,next) =>{
+    const {email, password} = req.body;
+    const loggedIn = await UserModel.findOne({email, password});
+    if(loggedIn){
+        res.status(200).json("Valid login credentials")
+    }
+    else{
+        res.status(401).json("Invalid login credentials")
+    }
+    
+};
+    
+app.post("/login", login);
 
-//Error Handler
+/*Error Handler
 app.use((err , req , res , next)=>{
     res.status(err.status);
     res.json({
@@ -135,7 +149,7 @@ app.use((err , req , res , next)=>{
             message : err.message,
         },
 });
-});
+});*/
 
 app.listen(PORT, () => {
     console.log(`Project-3 app listening at http://localhost:${PORT}`);
