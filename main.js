@@ -89,27 +89,17 @@ const createNewArticle = async (req, res, next) =>{
 app.post('/articles' , createNewArticle);
 
 
-//Ticket #5 
+//Ticket 2.A #5  
 const updateAnArticleById = async (req , res , next) => {
     const id = req.params.id;
-    const newTitle = req.body.title;
-    const newDescription = req.body.description;
-    const newAuthor = req.body.author;
-    const err = new Error("You need to enter an existing Article ID");
-    err.status = 404;
-    let index;
-    await articles.forEach((element, i) => {
-        if(element.id == id){
-            index = i;
-        }
-    });
-    if(index < articles.length && newTitle.length >= 2 && newDescription.length >= 10 && newAuthor.length >= 2){
-        articles[index] = {title :`${newTitle}` , description : `${newDescription}`, author : `${newAuthor}`, id : `${id}`};
-        res.status(200).json(articles[index]);
+    const {title, description, author} = req.body;
+    const options = {"new" : true};
+    const updatedArticle = await ArticleModel.findByIdAndUpdate(id,{title, description, author},options); 
+    try {
+        res.json(updatedArticle);
+    } catch (err) {
+        console.log(err);
     }
-    else{
-        next(err);
-    };
 };
 
 app.put('/articles/:id' , updateAnArticleById);
