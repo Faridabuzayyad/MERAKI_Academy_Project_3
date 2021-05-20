@@ -147,7 +147,9 @@ const login = async (req,res,next) =>{
           if(authenticated){
               const payload =  {
                 userId: loggedIn._id,
-                country: loggedIn.country
+                country: loggedIn.country,
+                role: loggedIn.role.role,
+                permissions: loggedIn.role.permissions
                 }
               const token = await generateToken(payload);
               res.json(`token: ${token}`)
