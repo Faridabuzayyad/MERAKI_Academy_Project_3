@@ -1,13 +1,14 @@
 const express = require("express");
-const { uuid } = require('uuidv4');
+require("dotenv").config();
+//const { uuid } = require('uuidv4');
 const {UserModel, ArticleModel, CommentModel} = require("./schema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const db = require("./db");
 const app = express();
-const PORT = 5000;
-const secret = process.env.SECRET;
+const PORT = process.env.PORT;
+const SECRET = process.env.SECRET;
+const TOKEN_EXP_Time = process.env.TOKEN_EXP_Time;
 
 app.use(express.json());
 
@@ -129,15 +130,34 @@ const createNewAuthor = async (req,res,next)=> {
 app.post("/users", createNewAuthor);
 
 
-//2.B Ticket #2
+//3.A Ticket #2
+const generateToken = (payload) => {
+    const options = {
+      expiresIn: TOKEN_EXP_Time,
+    };
+    return jwt.sign(payload, SECRET, options);
+  };
+
 const login = async (req,res,next) =>{
-    const {email, password} = req.body;
-    const loggedIn = await UserModel.findOne({email, password});
+    const email = req.body.email.toLowerCase();
+    const password = req.body.password;
+    const loggedIn = await UserModel.findOne({"email" : email});
     if(loggedIn){
-        res.status(200).json("Valid login credentials")
+        const authenticated = await bcrypt.compare(password, loggedIn.password);
+          if(authenticated){
+              const payload =  {
+                userId: loggedIn._id,
+                country: loggedIn.country
+                }
+              const token = await generateToken(payload);
+              res.json(`token: ${token}`)
+          }
+          else{
+            res.status(403).json("The password you’ve entered is incorrect")
+          }
     }
     else{
-        res.status(401).json("Invalid login credentials")
+        res.status(404).json("The email doesn't exist")
     }
 };
     
