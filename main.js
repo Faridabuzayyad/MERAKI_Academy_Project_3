@@ -163,6 +163,18 @@ const login = async (req,res,next) =>{
     
 app.post("/login", login);
 
+//3.A Ticket #3
+const authentication = async (req, res, next) => {
+    const token = req.headers.authorization.split(" ")[1];
+    await jwt.verify(token, SECRET, (err,result)=>{
+
+        if(err){
+          return res.status(403).json("forbidden");
+        } else{
+            next()
+        }
+    });
+};
 //2.B Ticket #3
 const createNewComment = async (req,res,next) => {
     const {comment, commenter} = req.body;
@@ -181,7 +193,7 @@ const createNewComment = async (req,res,next) => {
 
 }
 
-app.post("/articles/:id/comments", createNewComment);
+app.post("/articles/:id/comments",authentication, createNewComment);
 
 
 
