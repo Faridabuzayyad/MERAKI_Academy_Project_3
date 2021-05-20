@@ -29,10 +29,18 @@ const comments = new mongoose.Schema({
     commenter : mongoose.Schema.ObjectId,
 })
 
+
+const roles = new mongoose.Schema({
+    role: String,
+    permissions:['MANAGE_USERS', 'CREATE_COMMENTS']
+})
+
+const role = mongoose.model("ROLE", roles);
 const user = mongoose.model("User", users);
 const article = mongoose.model("Article", articles);
 const comment = mongoose.model("Comment", comments);
 
+module.exports.RoleModel = role;
 module.exports.UserModel = user;
 module.exports.ArticleModel = article;
 module.exports.CommentModel = comment;
