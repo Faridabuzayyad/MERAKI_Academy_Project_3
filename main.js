@@ -150,7 +150,7 @@ const login = async (req,res,next) =>{
                 country: loggedIn.country,
                 role: loggedIn.role.role,
                 permissions: loggedIn.role.permissions
-                }
+                };
               const token = await generateToken(payload);
               res.json(`token: ${token}`)
           }
@@ -173,6 +173,7 @@ const authentication = async (req, res, next) => {
         if(err){
           return res.status(403).json("forbidden");
         } else{
+            req.token = token;
             next()
         }
     });
