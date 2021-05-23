@@ -138,6 +138,7 @@ const generateToken = (payload) => {
     return jwt.sign(payload, SECRET, options);
   };
 
+
 const login = async (req,res,next) =>{
     const email = req.body.email.toLowerCase();
     const password = req.body.password;
@@ -173,10 +174,25 @@ const authentication = async (req, res, next) => {
         if(err){
           return res.status(403).json("forbidden");
         } else{
-            req.token = token;
+            const parsedToken = jwt.verify(token, process.env.SECRET);
+            req.token = parsedToken;
             next()
         }
     });
+};
+//3.B Ticket #5
+const authorization = async (string) => {
+    return (req, res, next) => {
+        RoleModel.findById(req.token.role)
+        .then((result) => {
+            if(!result.permissions.includes(string))
+            return res.status(403).json({ message : 'forbidden' });
+            next();
+        })
+        .catch((error) => {
+            res.status(403).json({ message : 'forbidden'})
+        })
+    };
 };
 //2.B Ticket #3
 const createNewComment = async (req,res,next) => {
@@ -196,7 +212,7 @@ const createNewComment = async (req,res,next) => {
 
 }
 
-app.post("/articles/:id/comments",authentication, createNewComment);
+app.post("/articles/:id/comments",authentication, authorization, createNewComment);
 
 
 
